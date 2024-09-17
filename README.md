@@ -51,6 +51,7 @@ Each module is carefully designed to not only teach you the technical know-how b
 Run the application:
 ```bash
 python app.py
+```
 
 You can now interact with the AI Career Coach through the Gradio interface. Follow the prompts to enhance your resume, generate cover letters, and receive job hunting advice.
 
