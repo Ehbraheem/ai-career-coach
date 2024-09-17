@@ -35,7 +35,7 @@ Each module is carefully designed to not only teach you the technical know-how b
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/ai-career-coach.git
+    git clone https://github.com/Ehbraheem/ai-career-coach.git
     cd ai-career-coach
     ```
 
@@ -51,3 +51,16 @@ Each module is carefully designed to not only teach you the technical know-how b
 Run the application:
 ```bash
 python app.py
+
+You can now interact with the AI Career Coach through the Gradio interface. Follow the prompts to enhance your resume, generate cover letters, and receive job hunting advice.
+
+### Contributing
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+### License
+This project is licensed under the MIT License. See the LICENSE file for details.
+
+### Acknowledgements
+[IBM](https://www.ibm.com/watson) Watson for providing the AI capabilities.
+[Gradio](https://gradio.app) for the user-friendly interface.
+All contributors and users for their support
