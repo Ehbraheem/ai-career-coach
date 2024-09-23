@@ -3,3 +3,4 @@ gradio==4.43.*
 ibm_watsonx_ai==1.1.9
 email-validator==2.1.1
 python-dotenv==1.*
+azure-ai-inference

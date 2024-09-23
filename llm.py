@@ -2,14 +2,25 @@ from os import getenv
 from ibm_watsonx_ai.foundation_models.utils.enums import ModelTypes, DecodingMethods
 from ibm_watsonx_ai.foundation_models import Model
 from ibm_watsonx_ai.metanames import GenTextParamsMetaNames as GenParams
+
+from azure.ai.inference import ChatCompletionsClient
+from azure.ai.inference.models import SystemMessage
+from azure.ai.inference.models import UserMessage
+from azure.core.credentials import AzureKeyCredential
+
 from dotenv import load_dotenv
 
 load_dotenv()
+
+ibm_model = None
+azure_client = None
 
 
 Watsonx_API = getenv('IBM_WATSON_X_API_KEY')
 Project_id = getenv('IBM_WATSON_X_PROJECT_ID') or 'skills-network'
 Watsonx_URL = getenv('IBM_WATSON_X_URL') or 'https://us-south.ml.cloud.ibm.com'
+AZURE_MODEL_URL = getenv('AZURE_MODEL_URL')
+GITHUB_TOKEN = getenv('GITHUB_TOKEN')
 
 credentials = {
     'url': Watsonx_URL,
@@ -23,12 +34,34 @@ params = {
     GenParams.TEMPERATURE: 0.5,
 }
 
-model = Model(
-    model_id = model_id,
-    project_id = Project_id,
-    credentials = credentials,
-    params = params,
-)
+def __azure_client__():
+    global azure_client
+
+    azure_client = ChatCompletionsClient(
+        endpoint=AZURE_MODEL_URL,
+        credential=AzureKeyCredential(GITHUB_TOKEN),
+    )
+
+def __ibm_watson_model__():
+    global ibm_model
+
+    ibm_model = Model(
+        model_id = model_id,
+        project_id = Project_id,
+        credentials = credentials,
+        params = params,
+    )
+
+def __init_models__():
+    if GITHUB_TOKEN is not None:
+        # Use Azure
+        __azure_client__()
+    else:
+        __ibm_watson_model__()
+
+# Setup models
+__init_models__()
+
 
 def career_advice(position, job_description, resume):
     prompt = f"Considering the job description: {job_description}, and the resume provided: {resume}, identify areas for enhancement in the resume. Offer specific suggestions on how to improve these aspects to better match the job requirements and increase the likelihood of being selected for the position of {position}."
@@ -69,12 +102,34 @@ def process_message(user_message):
     return __process_prompt__(prompt)
 
 
+def __azure_process_prompt__(prompt):
+    response = azure_client.complete(
+        messages=[
+            SystemMessage(content="You are a helpful assistant."),
+            UserMessage(content=prompt),
+        ],
+        model="Meta-Llama-3.1-405B-Instruct",
+        temperature=0.8,
+        max_tokens=4096,
+        top_p=0.1
+    )
 
-def __process_prompt__(prompt):
-    response_text = model.generate_text(prompt=prompt)
+    print('Azure Model response: ', response)
+
+    return response.choices[0].message.content
+
+def __ibm_watzon_process_prompt__(prompt):
+    response_text = ibm_model.generate_text(prompt=prompt)
     print('WatsonX response: ', response_text)
 
     return response_text
+
+def __process_prompt__(prompt):
+    print('Prompt received: ', prompt)
+    if azure_client:
+        return __azure_process_prompt__(prompt)
+    else:
+        return __ibm_watzon_process_prompt__(prompt)
 
 
 if __name__ == '__main__':
