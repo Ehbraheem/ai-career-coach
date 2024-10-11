@@ -21,6 +21,7 @@ Project_id = getenv('IBM_WATSON_X_PROJECT_ID') or 'skills-network'
 Watsonx_URL = getenv('IBM_WATSON_X_URL') or 'https://us-south.ml.cloud.ibm.com'
 AZURE_MODEL_URL = getenv('AZURE_MODEL_URL')
 GITHUB_TOKEN = getenv('GITHUB_TOKEN')
+AZURE_MODEL_NAME = getenv('AZURE_MODEL_NAME')
 
 credentials = {
     'url': Watsonx_URL,
@@ -67,7 +68,7 @@ def career_advice(position, job_description, resume):
     prompt = f"Considering the job description: {job_description}, and the resume provided: {resume}, identify areas for enhancement in the resume. Offer specific suggestions on how to improve these aspects to better match the job requirements and increase the likelihood of being selected for the position of {position}."
 
     return __process_prompt__(prompt)
-    
+
 
 def cover_letter(company, position, job_description, resume, skills = None):
     prompt = (
@@ -108,10 +109,10 @@ def __azure_process_prompt__(prompt):
             SystemMessage(content="You are a helpful assistant."),
             UserMessage(content=prompt),
         ],
-        model="Meta-Llama-3.1-405B-Instruct",
+        model=AZURE_MODEL_NAME,
         temperature=0.8,
         max_tokens=4096,
-        top_p=0.1
+        top_p=1
     )
 
     print('Azure Model response: ', response)
