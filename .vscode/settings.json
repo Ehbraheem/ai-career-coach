@@ -1,0 +1,4 @@
+{
+  "mdb.sendTelemetry": false,
+  "gitlens.telemetry.enabled": false
+}

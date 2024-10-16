@@ -16,4 +16,5 @@ app = gr.Interface(
 
 
 if __name__ == '__main__':
-    app.launch()
+    app.launch(share=True)
+
