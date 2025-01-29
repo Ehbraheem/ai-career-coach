@@ -1,0 +1,3 @@
+[submodule "resume-worded"]
+	path = resume-worded
+	url = https://github.com/paul1029-ife/resume-worded.git
